@@ -27,10 +27,10 @@
 
 ## 一条命令安装
 
-仓库发布后，在 **VPS 的终端**执行：
+在 **全新 VPS 的终端**整行执行（推荐固定后台端口为 `8848`，方便先配置云安全组）：
 
 ```bash
-curl -fL --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/gududelang63-droid/Ryan/main/install.sh -o /root/3xui-install.sh && bash /root/3xui-install.sh
+apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y curl ca-certificates && curl -fL --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/gududelang63-droid/Ryan/main/install.sh -o /root/3xui-install.sh && PANEL_PORT=8848 bash /root/3xui-install.sh
 ```
 
 如果 VPS 已有 curl，以上命令即可启动；若首次提示 `curl: command not found`，先执行 `apt-get update && apt-get install -y curl ca-certificates`。入口随后会自动补齐 python3 等依赖。
