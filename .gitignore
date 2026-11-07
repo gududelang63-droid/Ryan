@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.env
+*.db
+*.db-*
+credentials.txt
+recovery.json
+state.json
+*.tar.gz
+*.zip
+.test-release/
