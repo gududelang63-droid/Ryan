@@ -1,0 +1,4 @@
+.git
+.test-release
+__pycache__
+*.pyc
