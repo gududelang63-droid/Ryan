@@ -1,0 +1,10 @@
+services:
+  verify:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    network_mode: bridge
