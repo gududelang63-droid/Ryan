@@ -95,6 +95,26 @@ IP 证书是短有效期证书，必须保留 TCP 80 的入站可达性供续期
 
 详细验收范围见 [VALIDATION.md](VALIDATION.md)。
 
+## 在 NAS Docker 中安全试跑
+
+Docker 适合验证安装代码、固定上游文件和真实 3x-ui 二进制，但不能代替独立 VPS 的公网证书、UFW、Fail2ban、SSH 保活与重启验收。普通 Ubuntu 容器没有完整 systemd，**不要在 NAS 上直接执行生产安装命令，也不要给测试容器 privileged、host 网络或 NAS 系统目录挂载**。
+
+仓库提供一个隔离的 Ubuntu 24.04 测试容器：不映射端口、不挂载宿主目录、移除 Linux capabilities，并启用 `no-new-privileges`。在已安装 Git 与 Docker Compose 的 NAS 终端执行：
+
+```bash
+git clone https://github.com/gududelang63-droid/Ryan.git
+cd Ryan
+docker compose -f compose.test.yaml up --build --abort-on-container-exit --exit-code-from verify
+```
+
+看到 `PASS：Docker 安全验证全部通过。` 表示以下内容通过：
+
+- Bash、ShellCheck、bootstrap SHA-256 和安全单元测试；
+- 固定版本 3x-ui / acme.sh 的下载与 SHA-256 校验；
+- 真实 3x-ui 二进制的 HTTPS 登录、空入站、禁用默认凭据与密码变更。
+
+测试容器结束后可以删除镜像和构建缓存；不会在 NAS 上安装 3x-ui，也不会修改 NAS 防火墙。
+
 ## 上游
 
 - [MHSanaei/3x-ui](https://github.com/MHSanaei/3x-ui)
