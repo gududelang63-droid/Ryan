@@ -3,6 +3,15 @@ set -Eeuo pipefail
 
 cd "$(dirname "$0")/.."
 
+case "$(uname -m)" in
+  x86_64) test_arch=amd64 ;;
+  aarch64|arm64) test_arch=arm64 ;;
+  *)
+    printf '不支持的 NAS CPU 架构：%s\n' "$(uname -m)" >&2
+    exit 1
+    ;;
+esac
+
 cleanup() {
   rm -rf .test-release
 }
@@ -17,13 +26,14 @@ printf '%s\n' '==> 2/4 运行安全单元测试'
 python3 -m unittest discover -s tests -v
 
 printf '%s\n' '==> 3/4 下载并校验固定版本的 3x-ui 与 acme.sh'
-python3 - <<'PY'
+TEST_ARCH="$test_arch" python3 - <<'PY'
+import os
 import setup
 from pathlib import Path
 
 target = Path('.test-release')
 target.mkdir()
-setup.download_archive('amd64', target / 'release.tar.gz')
+setup.download_archive(os.environ['TEST_ARCH'], target / 'release.tar.gz')
 setup.download_acme(target / 'acme.sh')
 setup.extract_archive(target / 'release.tar.gz', target)
 PY
